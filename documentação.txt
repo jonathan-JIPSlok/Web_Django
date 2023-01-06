@@ -1,0 +1,226 @@
+CRIANDO UM PROJETO:
+	Primeiro crie uma pasta para o projeto
+	depois crie um ambiente virtual
+	por padrão o python tem o venv
+	"python -m venv nomeEnv"
+	ou pode utilizar o virtualenv
+	"python virtualenv nomeEnv"
+	Ative a env
+	"nomeEnv\Scripts\Activate"
+	Instale o Django
+	"pip install django"
+	
+	Por ser a primeira vez utilizando o django tera que criar um projeto
+	"django-admin startproject NomedoProjeto ."
+	obs: o ponto no final serve para que não crie 2 pastas com o nome do projeto
+
+ARQUIVOS CRIADOS:
+	diretorio_externo/
+   		manage.py
+    		Diretorio_interno/
+        		__init__.py
+        		settings.py
+        		urls.py
+        		asgi.py
+        		wsgi.py
+
+	* O diretório_externo é um contêiner para o seu projeto.
+	Seu nome não importa para Django; você pode renomeá-lo para o que quiser."diretorio_externo\"
+	
+	* manage.py: Um utilitário de linha de comando que permite que você interaja com o Projeto Django de várias maneiras.
+	
+	* O diretorio_interno é o pacote Python real para o seu projeto.
+	Seu nome é o nome do pacote Python que você precisará usar para importar qualquer coisa dentro dele (por exemplo).
+
+	* mysite/settings.py: Configurações/configuração para este projeto Django.
+	As configurações do Django informarão tudo sobre como configurar o trabalho.
+
+	* mysite/urls.py: As declarações de URL para este projeto Django; um "sumário" do seu site com tecnologia Django.
+
+	* mysite/asgi.py: Um ponto de entrada para servidores Web compatíveis com ASGI para que sirva o seu projeto.
+
+	* mysite/wsgi.py: Um ponto de entrada para servidores Web compatíveis com WSGI para que sirva o seu projeto.
+
+O SERVIDOR DE DESENVOLVIMENTO:
+	Vamos verificar se o seu projeto django esta funcionando.
+	Mude para o "deretorio_externo" caso não estejá nele.
+	
+	Para iniciarmos o servidor digite:
+	"python manage.py runserver"
+	Ele devera informar a url do servidor ex: Starting development server at http://127.0.0.1:8000/
+	
+	* Por padrão, o comando runserver inicia o servidor de desenvolvimento no IP interno na porta 8000.
+	Se quiser alterar a porta do servidor, passe como argumento ex: "python manage.py runserver 8080" 8080 é a porta de ex.
+	Se quiser alterar o IP do servidor, passe como argumento junto com a porta ex: "python manage.py runserver 0.0.0.0:8000"
+	
+CRIANDO UM APLICATIVO ENQUETES:
+	Agora que seu ambiente(projeto) está configurado, você está pronto para começar.
+	
+	Cada aplicativo que você escreve no django consiste em um pacote Python que segue uma certa convenção.
+	Django vem com um utilitário que gera automaticamente a estrutura básica de diretórios de um aplicativo.
+	
+	PROJETO VS APLICATIVOS:
+		Um aplicativo é um aplicativo Web que faz algo
+		- por exemplo, um sistema de blog, um banco de dados de registros públicos ou um pequeno aplicativo de enquete.
+		Um projeto é uma coleção de configurações e aplicativos para um determinado site.
+		Um projetos pode conter vários aplicativos. Um aplicativo pode estar em vários projetos.
+
+	CRIANDO O APLICATIVO:
+		Para criar o aplicativo digite o seguinte comando:
+			"python manage.py startapp NomeDoAplicativo"
+		Isso criará um diretório com o nome do aplicativo e seus arquivos necessarios:
+			
+			NomeDoApplicativo/
+    				__init__.py
+    				admin.py
+    				apps.py
+    				migrations/
+        				__init__.py
+   				models.py
+   				tests.py
+    				views.py
+
+		Essa estrutura de diretórios abrigará o aplicativo.
+
+ESCREVA SUA PRIMEIRA VISUALIZAÇÃO(VIEWS):
+	Vamos escrever a primeira visualização.
+	Abra o arquivo "NomeDoAplicativo/Views.py"
+	Digite o seguinte codigo:
+	"from django.http import HttpResponse
+	 def index(request):
+		return HttpResponse("Olá Mundo!")
+	"
+	Esta é a views mais simples possivel no django.
+	Para chamar a "views", precisamos mapear ele para uma URL e para isto precisamos de um URLconf.
+	Para criar a URlconf crie na pasta do Aplicativo um arquivo chamado "urls.py"
+	No arquivo inclua o seguinte código:
+	"from django.urls import path
+	 from . import views
+	 urlpatterns = [
+		path('', views.index, name='index'),
+	 ]
+	"
+
+	Agora precisamos apontar o URLconf para a raiz do módulo.
+	Para isto, entre no arquivo urls.py dentro do diretorio do projeto.
+	adicione o include na importação.
+	"from django.urls import path, include"
+	E adicione um path com o include na lista do urlpatterns.
+	"path('NomeDoApp/', include('NomeDoApp.urls'))"
+	
+	A função include() permite referenciar outros URLconfs.
+	
+	Agora você conectou uma view a um URLconf. Verifique se está funcionando com o comando:
+	"python manage.py runserver"
+
+ARGUMENTOS DO PATH():
+	A função path() é passada quatro argumentos, dois necessários, e dois opcionais.
+	Neste ponto, vale a pena rever para que servem esses argumentos.
+	
+	path() argumento: route
+		route é uma cadeia de caracteres que contém um padrão de URL.
+		Ao processar uma solicitação, Django começa no primeiro padrão e faz o seu caminho para baixo a lista, comparando a URL solicitada com cada padrão até encontrar um que combina.
+
+	path() argumento: view
+		Quando o Django encontra um padrão correspondente, ele chama a função de exibição especificada com um objeto HttpRequest como o primeiro argumento e qualquer valores "capturados" da rota como argumentos de palavra-chave.
+
+	path() argumento: kwargs
+		Argumentos de palavras-chave arbitrárias podem ser passados em um dicionário para a exibição de destino.
+
+	path() argumento: name
+		Nomear seu URL permite que você se refira a ele inequivocamente de outro lugar no Django, especialmente de dentro de modelos. Este poderoso recurso permite que você faça alterações globais nos padrões de URL do seu projeto enquanto toca apenas em um único arquivo.
+
+CONFIGURANDO O BANCO DE DADOS:
+	Por padrão, a configuração usa SQLite.
+	Ao iniciar seu primeiro projeto real, você pode querer usar um banco de dados mais escalável como o PostgreSQL, para evitar dores de cabeça de comutação de banco de dados lá na frente.
+
+	Se você deseja usar outro banco de dados, instale o banco de dados apropriado e altere as seguintes chaves no item DATABASES dentro do arquivo settings.py para corresponder à sua conexão de banco de dados.
+
+	* ENGINE - Estão disponiveis -> 'django.db.backends.sqlite3', 'django.db.backends.postgresql', 'django.db.backend.mysql', 'django.db.backends.oracle'
+	* NAME - O nome do seu banco de dados. Se você estiver usando SQLite, o banco de dados será um arquivo em seu computador; neste caso, NAME deve ser o caminho absoluto completo, incluindo o nome do arquivo. O valor padrão, armazenará o arquivo em seu diretório do porjeto. BASE_DIR/'db.sqlite3'
+
+	Se você não estiver usando o SQLite como seu banco de dados, configurações adicionais, como USER, PASSWORD e HOST, deverão ser adicionadas.
+	Enquanto estiver editando, defina TIME_ZONE como seu fuso horário em settings.py .
+	
+	Além disso, observe a configuração de INSTALLED_APPS na parte superior do arquivo.
+	Isso contém os nomes de todos os aplicativos Django que estão ativados.
+	Os aplicativos podem ser usados em vários projetos, e você pode empacotar e distribuí-los para uso por outros em seus projetos.
+
+	Por padrão INSTALLED_APPS contém os seguintes aplicativos, todos os quais vem com o Django.
+
+	* django.contrib.admin - O site de administração. Você vai usá-lo em breve.
+	* django.contrib.auth - Um sistema de autenticação.
+	* django.contrib.contenttypes - Uma estrutura para tipos de conteúdo.
+	* django.contrib.sessions - Uma estrutura de sessão.
+	* django.contrib.messages - Uma estrutura de mensagens.
+	* django.contrib.staticfiles - Uma estrutura para gerenciar arquivos estáticos.
+
+	Esses aplicativos são incluídos por padrão como uma conveniência para o caso comum.
+	
+	Alguns desses aplicativos fazem uso de pelo menos uma tabela de banco de dados, no entanto, precisamos criar as tabelas no banco de dados antes de podermos usá-las.
+	Para fazer	isso, execute o comando:
+	"python manage.py migrate"
+
+	O comando "migrate" examina a configuração INSTALLED_APPS e cria todas as tabelas de banco de dados necessárias de acordo com as configurações do banco de dados em seu arquivo e as migrações de banco de dados enviadas com o aplicativo.
+	Você verá uma mensagem para cada migração que se aplica.
+	Se você estiver interessado, execute o cliente de linha de comando para o seu banco de dados e tipo(o banco de dados que escolheu) para exibir as tabelas que odjango criou.
+
+CRIANDO MODELOS
+	Agora vamos definir seus modelos - essencialmente, seu layout de banco de dados, com metadados adicionais.
+	
+	Um modelo é a fonte única e definitiva de informações sobre seus dados.
+	Ela contém os campos e comportamentos essenciais dos dados que você está armazenando.
+	Django segue oPrincípio DRY. O objetivo é definir o seu modelo de dados em um só lugar e derivar automaticamente as coisas a partir dele.
+
+	Isso inclui as migrações - ao contrário do Ruby On Rails, por exemplo, migrações são inteiramente derivados do seu arquivo de modelos e são essencialmente um histórico que o Django pode percorrer para atualizar seu esquema de banco de dados para corresponder aos seus modelos atuais.
+	
+	Esses conceitos são representados por classes Python. Edite o para que ele se pareça com isto:
+	No diretorio do App arquivo models.py
+	"
+		from django.db import models
+
+
+		class Question(models.Model):
+   			question_text = models.CharField(max_length=200)
+    			pub_date = models.DateTimeField('date published')
+
+
+		class Choice(models.Model):
+    			question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    			choice_text = models.CharField(max_length=200)
+    			votes = models.IntegerField(default=0)
+	"
+
+	Aqui cada modelo é representado por uma classe de subclasses django.db.models.Model .
+	Cada modelo tem um número de variáveis de classe, cada um dos quais representa um campo de banco de dados no modelo.
+
+	Cada campo é representado por uma instância de uma classe Field - por exemplo, Charfield para campos de caracteres e DateTimeField para datetimes.
+	Isso diz a Django que tipo de dados cada campo retém.
+	
+	O nome de cada instância de campo(por exemplo) é o nome do campo, em condições de uso amigável formato.
+	Você usará esse valor em seu código python e seu banco de dados usará ele como o nome da coluna. question_textpub_date
+	
+	Você pode usar um primeiro argumento opcional para um Fiel para designar um nome legível por humanos.
+	Isso é usado em algumas partes introspectivas do Django, e ele funciona como documentação.
+	Se esse campo não for fornecido, o Django usará o nome legível por máquina.
+
+	Algumas classes Field têm argumentos obrigatórios. CharField, por exemplo, exige que você dê a ele uma max_lenght.
+	Isso é usado não apenas no esquema de banco de dados, mas em validação, como veremos em breve.
+
+	Um Field também pode ter vários argumentos opcionais; nesse caso, definimos o valor default de 0.
+	
+	Finalmente observe que um relacionamento é definido, usando ForeignKey.
+	Isso diz a Django eachis relacionado a um single.
+	Django suporta todo o banco de dados comum relacionamentos: muitos-para-um, muitos-para-muitos e um-para-um.
+
+ATIVANDO MODELOS
+	Esse pequeno pedaço de código de modelo dá ao Django muita informação. Com ele, Django é capaz de:
+	* Criar um esquema de banco de dados (instruções) para este aplicativo. CREATE TABLE
+	* Criar uma API de acesso ao banco de dados Python para accessingandobjects. QuestionChoice
+	
+	Mas primeiro precisamos dizer ao nosso projeto que o aplicativo está instalado.
+
+	Para incluir o aplicativo em nosso projeto, precisamos adicionar uma referência a sua classe de configuração na configuração de INSTALLED_APPS.
+	
+	A classe está no arquivo settings.py.
+	Edite o arquivo e adicione esse caminho pontilhado à configuração INSTALLED_APPS.
