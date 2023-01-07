@@ -308,3 +308,154 @@ ATIVANDO MODELOS
 	O motivo pelo qual há comandos separados para fazer e aplicar migrações é porque você confirmará migrações para seu sistema de controle de versão e as enviará com seu aplicativo; eles não só tornam o seu desenvolvimento mais fácil, eles também são utilizável por outros desenvolvedores e em produção.
 
 	Leia adocumentação do django-admin para obter informações completas informações sobre o que o utilitário pode fazer. manage.py
+
+BRINCANDO COM A API
+	Agora, vamos pular para o shell Python interativo e brincar com o API que o Django nos da. Para invocar o shell do Python, use este comando:
+
+	"py manage.py shell"
+	Estamos usando isso em vez de simplesmente digitar "python", porque define a variável de ambiente DJANGO_SETTINGS_MODULE, o que dá Django o caminho de importação Python para o seu arquivo. manage.py mysite/settings.py
+
+	Quando estiver no shell, explore a API do banco de dados:
+		>>> from polls.models import Choice, Question  # Import the model classes we just wrote.
+
+		# Podemos ver que não a nenhum item salvo em Questions.
+		>>> Question.objects.all()
+		<QuerySet []>
+
+		# Vamos criar uma nova Question.
+		# O Suporte para horario atual (time zone) esta ativado no documento settings.
+		# importe a biblioteca timezone de django.utils
+		# Django pode salvar o horario em pub_date. Use timezone.now() para pegar um horario
+
+		>>> from django.utils import timezone
+		>>> q = Question(question_text="What's new?", pub_date=timezone.now())
+
+		# Esse comando salvo o objeto no banco de dados. basta usar o comando save().
+		>>> q.save()
+
+		# Aqui você pega o id gerado pelo banco de dados.
+		>>> q.id
+		1
+
+		# Acesse os valores pelo python atraves de atributos.
+		>>> q.question_text
+		"What's new?"
+		>>> q.pub_date
+		datetime.datetime(2012, 2, 26, 13, 0, 0, 775217, tzinfo=datetime.timezone.utc)
+
+		# adicione novos valores atravez de atributos, não esqueça do comando save().
+		>>> q.question_text = "What's up?"
+		>>> q.save()
+
+		# objects.all() mostra todos os item cadastrados no banco de dados de Question.
+		>>> Question.objects.all()
+		<QuerySet [<Question: Question object (1)>]>
+
+	Espere um minuto. não é útil a representação deste objeto. Vamos corrigir isso editando o modelo (no arquivo) e adicionando a __str__() método ao bot hand:
+		from django.db import models
+
+		class Question(models.Model):
+			# ...
+			def __str__(self):
+				return self.question_text
+
+		class Choice(models.Model):
+			# ...
+			def __str__(self):
+				return self.choice_text
+	
+	É importante adicionar__str__()métodos ao seu modelos, não só para sua própria conveniência ao lidar com o interativo mas também porque as representações dos objetos são usadas em todo o Django's administrador gerado automaticamente.
+
+	Vamos também adicionar um método personalizado a este modelo:
+		import datetime
+
+		from django.db import models
+		from django.utils import timezone
+
+
+		class Question(models.Model):
+			# ...
+			def was_published_recently(self):
+				return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+	
+	Observe a adição, para referenciar o módulo datetime padrão do Python e o do Django utilitários relacionados ao fuso horário em django.utils.timezone, respectivamente. Se você não está familiarizado com o manuseio de fuso horário em Python, você pode aprender mais, o fuso horário oferece suporte a documentos. import datetime from django.utils import timezone
+
+	Salve essas alterações e inicie um novo shell interativo Python executando novamente: python manage.py shell
+		>>> from polls.models import Choice, Question
+
+		# Graças ao __str__() que adicionamos, podemos agora ver oque está escrito.
+		>>> Question.objects.all()
+		<QuerySet [<Question: What's up?>]>
+
+		# Django oferece uma rica API de pesquisa de banco de dados inteiramente desenvolvida por
+		# argumentos de palavra-chave.
+		>>> Question.objects.filter(id=1)
+		<QuerySet [<Question: What's up?>]>
+		>>> Question.objects.filter(question_text__startswith='What')
+		<QuerySet [<Question: What's up?>]>
+
+		# obtem a pergunta (que foi passada a question) que foi publicada este ano.
+		>>> from django.utils import timezone
+		>>> current_year = timezone.now().year
+		>>> Question.objects.get(pub_date__year=current_year)
+		<Question: What's up?>
+
+		# Se pesquisar por um ID que não existe. Ele da um exception.
+		>>> Question.objects.get(id=2)
+		Traceback (most recent call last):
+			...
+		DoesNotExist: Question matching query does not exist.
+
+		# A pesquisa por chave primaria é a mais comun, então Django fornece um
+		# atalho para pesquisa exata de schave primaria.
+		# O codigo seguinte é identico a Question.objects.get(id=1).
+		>>> Question.objects.get(pk=1)
+		<Question: What's up?>
+
+		# certifique-se de que o nosso methodo personalizado funcionou.
+		>>> q = Question.objects.get(pk=1)
+		>>> q.was_published_recently()
+		True
+
+		# dê á Question algumas opções. A chamada create contrói um novo
+		# Choice object, faz a instrução INSERT, adiciona a opção ao conjunto
+		# de escolha disponivel e retorna o novo Objeto Choice. Django cria
+		# um conjunto para manter o "outro lado" de uma relação ForeignKey
+		# (por exemplo, a escolha de uma pergunta) que pode ser acessada por meio da API.
+		>>> q = Question.objects.get(pk=1)
+
+		# exibir todas as opções do objeto relacionado, definido como -- none até agora.
+		>>> q.choice_set.all()
+		<QuerySet []>
+
+		# Crie três choices.
+		>>> q.choice_set.create(choice_text='Not much', votes=0)
+		<Choice: Not much>
+		>>> q.choice_set.create(choice_text='The sky', votes=0)
+		<Choice: The sky>
+		>>> c = q.choice_set.create(choice_text='Just hacking again', votes=0)
+
+		# Os objetos Choice têm acesso á API para seus objetos Question relacionados.
+		>>> c.question
+		<Question: What's up?>
+
+		# E vice-versa: os objetos Question obtêm acesso aos objetos Choice.
+		>>> q.choice_set.all()
+		<QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+		>>> q.choice_set.count()
+		3
+
+		# A API segue automaticamente os relacionamentos até onde você precisar.
+		# Use sublinhados duplos para separar relacionamentos.
+		# Isso funciona em quantos niveis você quiser, não há limite.
+		# Encontre todas as opções para qualquer questão cujo pub_date seja neste ano
+		# (reutilizando a variavel 'current_year' que criamos acima).
+		>>> Choice.objects.filter(question__pub_date__year=current_year)
+		<QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+
+		# Vamos deletar uma das opções. Use delete() para isso.
+		>>> c = q.choice_set.filter(choice_text__startswith='Just hacking')
+		>>> c.delete()
+
+	Para obter mais informações sobre relações de modelo, consulte Acessando objetos relacionados. Para saber mais sobre como usar sublinhados duplos para executar pesquisas de campo por meio da API, consulte Pesquisas de campo. Durante detalhes completos sobre a API do banco de dados, consulte nossa referência da API do banco de dados.
+	
