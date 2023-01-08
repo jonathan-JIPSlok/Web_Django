@@ -458,4 +458,18 @@ BRINCANDO COM A API
 		>>> c.delete()
 
 	Para obter mais informações sobre relações de modelo, consulte Acessando objetos relacionados. Para saber mais sobre como usar sublinhados duplos para executar pesquisas de campo por meio da API, consulte Pesquisas de campo. Durante detalhes completos sobre a API do banco de dados, consulte nossa referência da API do banco de dados.
+
+APRESENTANDO O DJANGO ADMIN
+	Filosofia
+		Gerando sites de administração para sua equipe ou clientes adicionarem, alterarem e excluírem O conteúdo é um trabalho tedioso que não requer muita criatividade. Para isso O Django automatiza totalmente a criação de interfaces de administração para modelos.
+		Django foi escrito em um ambiente de redação, com uma separação muito clara. entre "editores de conteúdo" e o site "público". Os gerentes de site usam o sistema para adicionar notícias, eventos, resultados esportivos, etc., e esse conteúdo é exibido no site público. Django resolve o problema de criar um interface unificada para os administradores de site editarem o conteúdo.
+		O administrador não se destina a ser usado pelos visitantes do site. É para o site gestores.
 	
+	Criando um usuario adiministrador
+		Primeiro, precisamons criar um usuário que possa fazer login no site de administração. Execute o seguinte comando:
+			"python manage.py createsuperuser"
+		Digite o nome de usuário desejado e pressione enter.
+			'username: admin'
+		Voçê será solicitado a fornecer o endereço de e-mail desejado:
+			"Email address: admin@exemplo.com"
+		O passo final é introduzir a sua palavra-passe(senha). Sera pedido que introduza a sua senha duas vezes.
