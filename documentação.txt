@@ -417,7 +417,7 @@ BRINCANDO COM A API
 		>>> q.was_published_recently()
 		True
 
-		# dê á Question algumas opções. A chamada create contrói um novo
+		# dê á Question algumas opções. A chamada create constrói um novo
 		# Choice object, faz a instrução INSERT, adiciona a opção ao conjunto
 		# de escolha disponivel e retorna o novo Objeto Choice. Django cria
 		# um conjunto para manter o "outro lado" de uma relação ForeignKey
@@ -473,3 +473,14 @@ APRESENTANDO O DJANGO ADMIN
 		Voçê será solicitado a fornecer o endereço de e-mail desejado:
 			"Email address: admin@exemplo.com"
 		O passo final é introduzir a sua palavra-passe(senha). Sera pedido que introduza a sua senha duas vezes.
+
+INICIAR O SERVIDOR DE DESENVOLVIMENTO
+	O site de administração do Django é ativado por padrão. Vamos começar o desenvolvimento e explorá-lo.
+	Se o servidor não estiver em execução, inicie-o da seguinte forma:
+		"python manage.py runserver"
+	Agora, abra o navegador da web e vá para "/admin/" em seu domínio local. Você deve ver a tela de login do administrador.
+	Como a traduçao está ativada por padrão, se você definir LANGUAGE_CODE, a tela de login será exibida no determinado idioma (se o django tiver a tradução apropriada).
+
+	Entre no site de administração
+		Agora, tente fazer login com a conta de superusuário que você criou na etapa anterior. Você deve ver a página de índice de administração do Django.
+		Você deve ver alguns tipos de conteúdo editável: grupos e usuários. Eles são fornecido por django.contrib.auth, a estrutura de autenticação enviada por Django.
