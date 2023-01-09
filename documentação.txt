@@ -484,3 +484,12 @@ INICIAR O SERVIDOR DE DESENVOLVIMENTO
 	Entre no site de administração
 		Agora, tente fazer login com a conta de superusuário que você criou na etapa anterior. Você deve ver a página de índice de administração do Django.
 		Você deve ver alguns tipos de conteúdo editável: grupos e usuários. Eles são fornecido por django.contrib.auth, a estrutura de autenticação enviada por Django.
+
+TORNAR O APLICATIVO DE ENQUETE MODIFICÁVEL NO ADMIN
+	Apenas mais uma coisa a fazer: precisamos dizer ao administrador que objetos ter uma interface de administração. Para fazer isso, abra o arquivo e edite-o para ter esta aparência: Questionpolls/admin.py
+	arquivo: enquetes/admin.py
+		from django.contrib import admin
+
+		from .models import Question
+
+		admin.site.register(Question)
