@@ -493,3 +493,27 @@ TORNAR O APLICATIVO DE ENQUETE MODIFICÁVEL NO ADMIN
 		from .models import Question
 
 		admin.site.register(Question)
+
+EXPLORE A FUNCIONALIDADE DE ADMINISTRAÇÃO GRATUITA
+	Agora que nos registramos, o Django sabe que ele deve ser exibido em a página de índice de administrador: Question
+
+	Clique em "Perguntas". Agora você está na página "lista de alterações" para perguntas. Esta página exibe todas as perguntas no banco de dados e permite que você escolha uma para alterá-la. Há a pergunta "O que está acontecendo?" que criamos anteriormente.
+
+	Clique na pergunta "O que está acontecendo?" para editá-la.
+
+	Coisas a notar aqui:
+
+	- O formulário é gerado automaticamente a partir domodelo.Question
+	- Os diferentes tipos de campo de modelo (DateTimeField,CharField) correspondem ao HTML apropriado widget de entrada. Cada tipo de campo sabe como se exibir no Django admin.
+	- CadaDateTimeFieldrecebe JavaScript gratuito Atalhos. As datas recebem um atalho "Hoje" e um pop-up de calendário, e as horas ficam um atalho "Agora" e um pop-up conveniente que lista os horários comumente inseridos.
+	
+	A parte inferior da página oferece algumas opções:
+
+	- Salvar – Salva as alterações e retorna à página de lista de alterações para esse tipo de objeto.
+	- Salvar e continuar editando – Salva as alterações e recarrega a página de administração para este objeto.
+	- Salvar e adicionar outro – Salva as alterações e carrega um novo formulário em branco para isso tipo de objeto.
+	- Excluir – Exibe uma página de confirmação de exclusão.
+
+	Se o valor de "Data de publicação" não corresponder à hora em que você criou o pergunta noTutorial 1, provavelmente significa que você esqueceu de definir o valor correto para a configuração TIME_ZONE. Altere-o, recarregue a página e verifique se o valor correto aparece.
+	Altere a "Data de publicação" clicando nos atalhos "Hoje" e "Agora". Então clique em "Salvar e continuar editando". Em seguida, clique em "Histórico" no canto superior direito. Você verá uma página listando todas as alterações feitas neste objeto através do administrador do Django, com o carimbo de data/hora e o nome de usuário da pessoa que fez a alteração.
+	
